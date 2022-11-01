@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 
 const isDeveloping = process.env.NODE_ENV !== 'production';
-const PORT = isDeveloping ? 80 : process.env.PORT;
+const PORT = isDeveloping ? 8001 : process.env.PORT;
 
-let req = require("request");
+const fs = require('fs');
 
 const http = require("http");
-// var express = require("express");
-// var app = express();
+
+const axios = require('axios');
+
+const {domainToASCII} = require('url');
 
 const server = http.createServer(function (req, res) {
 	res.end("Not your buiessenes");
@@ -19,19 +21,23 @@ server.listen(PORT, (err) => {
 	}
 })
 
-
-
-pingator = function pingator() {
-
-	req('http://zatelegramit.herokuapp.com/api/pingator', function (error, response, body) {
-			  console.log('error:', error); // Print the error if one occurred
-			  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-			  console.log('body:', body); // Print the HTML for the Google homepage.
-			});
-
+let pingator = async function pingator(url) {
+	const response = await axios(url);
+//	  let json = await response.json();
+	console.log(`${response.status}:${response.statusText}`);
 };
 
+const pings = []
+
+try {
+			const domains = fs.readFileSync('domains.txt', 'utf8').toString().split("\n").slice(0,-1);
+			for (i in domains){
+				console.log(domains[i])
+				pings.push(setInterval(pingator,1*1000,domains[i]));
+			}
+} 
+catch (err) {console.error(err)}
+	
 
 
-const i_pingator =  setInterval(pingator,10*1000);
 
