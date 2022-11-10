@@ -24,11 +24,12 @@ const pingator = async (url) =>{
 			await new Promise(resolve => setTimeout(resolve,1*1000))
 			const response = await axios(url);
 			console.log(`${url}:${response.status}:${response.statusText}`);
-//			break;
+			domains_wait_alert[url] = BASIC_WAIT_ALERT
 		} catch (err) {
 			domains_wait_alert[url] -= 1;
+			console.log(`${url}:BAD:${domains_wait_alert[url]}:tries left`)
 			//console every 3 microcycles
-			if (domains_wait_alert[url] % ((BASIC_WAIT_ALERT-1)/3) == 0) console.log(err);
+			if (domains_wait_alert[url] % ((BASIC_WAIT_ALERT-1)/3) == 0) console.log(err.cause);
 		};
 	if (domains_wait_alert[url] % (BASIC_WAIT_ALERT - 1) == 0) {
 	const err_resp = await axios.put(msg_domain,
